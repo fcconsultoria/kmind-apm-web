@@ -16,7 +16,7 @@ init({
 
 Use a API pública abaixo para logs estruturados; quando houver um span ativo,
 `trace_id` e `span_id` são adicionados ao registro. A captura de
-`console.warn` e `console.error` é opcional, pois altera métodos globais:
+Logs sao enviados somente quando a aplicacao usa `logger.*`, ocorre um erro global ou a captura de `console.warn` e `console.error` esta habilitada. A captura de console e opcional, pois altera metodos globais:
 
 ```ts
 import { logger } from "kmind-apm-web";
