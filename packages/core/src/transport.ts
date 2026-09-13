@@ -42,6 +42,14 @@ function payloadFor(signal: Signal, events: unknown[]): string | undefined {
   }
 }
 
+function isSameOrigin(destination: string): boolean {
+  try {
+    return new URL(destination, window.location.href).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
 export async function flush(signal: Signal): Promise<void> {
   if (inFlight[signal] || !config || !active) return;
   const events = queues[signal].splice(0, MAX_BATCH_EVENTS);
@@ -54,12 +62,15 @@ export async function flush(signal: Signal): Promise<void> {
   try {
     const beaconSender: ((destination: string, data?: BodyInit | null) => boolean) | undefined = typeof navigator === "undefined" ? undefined : navigator.sendBeacon.bind(navigator);
     const body = new Blob([payload], { type: "application/json" });
-    if (body.size < 64 * 1024 && beaconSender?.(url, body)) return;
+    // sendBeacon always uses credentials for cross-origin requests. The public
+    // ingest API authenticates with the client key, so use fetch with omitted
+    // credentials instead and preserve the host application's cookies.
+    if (isSameOrigin(url) && body.size < 64 * 1024 && beaconSender?.(url, body)) return;
     if (!nativeFetch) return;
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
-      await nativeFetch(url, { method: "POST", keepalive: true, headers: { "Content-Type": "application/json", "X-Kmind-Client-Key": config.clientKey }, body: payload, signal: controller.signal });
+      await nativeFetch(url, { method: "POST", mode: "cors", credentials: "omit", keepalive: true, headers: { "Content-Type": "application/json", "X-Kmind-Client-Key": config.clientKey }, body: payload, signal: controller.signal });
     } finally {
       window.clearTimeout(timeout);
     }
