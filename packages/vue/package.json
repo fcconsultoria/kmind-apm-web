@@ -1,6 +1,9 @@
 {
   "name": "kmind-apm-web-vue",
   "version": "0.1.0",
+  "repository": { "type": "git", "url": "https://github.com/fcconsultoria/kmind-apm-web" },
+  "homepage": "https://github.com/fcconsultoria/kmind-apm-web#readme",
+  "bugs": { "url": "https://github.com/fcconsultoria/kmind-apm-web/issues" },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
