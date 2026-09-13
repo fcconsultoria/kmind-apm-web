@@ -57,18 +57,28 @@ jobs:
           npm pack --dry-run --workspace kmind-apm-web-vue
           npm pack --dry-run --workspace kmind-apm-web-next
 
-      - name: Publish core package
+      - name: Publish pending package versions
         if: github.event_name == 'push' || inputs.publish == true
-        run: npm publish --workspace kmind-apm-web --access public
+        shell: bash
+        run: |
+          publish_if_missing() {
+            local workspace="$1"
+            local manifest="$2"
+            local name
+            local version
 
-      - name: Publish React wrapper
-        if: github.event_name == 'push' || inputs.publish == true
-        run: npm publish --workspace kmind-apm-web-react --access public
+            name="$(node -p "require('./' + process.argv[1]).name" "$manifest")"
+            version="$(node -p "require('./' + process.argv[1]).version" "$manifest")"
 
-      - name: Publish Vue wrapper
-        if: github.event_name == 'push' || inputs.publish == true
-        run: npm publish --workspace kmind-apm-web-vue --access public
+            if npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "${name}@${version} is already published; skipping."
+              return
+            fi
 
-      - name: Publish Next.js wrapper
-        if: github.event_name == 'push' || inputs.publish == true
-        run: npm publish --workspace kmind-apm-web-next --access public
+            npm publish --workspace "$workspace" --access public
+          }
+
+          publish_if_missing kmind-apm-web packages/core/package.json
+          publish_if_missing kmind-apm-web-react packages/react/package.json
+          publish_if_missing kmind-apm-web-vue packages/vue/package.json
+          publish_if_missing kmind-apm-web-next packages/next/package.json
