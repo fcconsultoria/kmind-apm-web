@@ -1,0 +1,75 @@
+name: Publish Kmind APM Web packages
+
+on:
+  push:
+    tags:
+      - "apm-web-v*"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publicar os pacotes no npm depois de validar"
+        required: true
+        default: false
+        type: boolean
+
+# id-token is required by npm Trusted Publishing (OIDC).
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Validate and publish packages
+    runs-on: ubuntu-latest
+    environment: npm-production
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      # Trusted Publishing requires npm 11.5.1 or newer.
+      - name: Set up npm
+        run: npm install --global npm@^11.5.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Review package contents
+        run: |
+          npm pack --dry-run --workspace kmind-apm-web
+          npm pack --dry-run --workspace kmind-apm-web-react
+          npm pack --dry-run --workspace kmind-apm-web-vue
+          npm pack --dry-run --workspace kmind-apm-web-next
+
+      - name: Publish core package
+        if: github.event_name == 'push' || inputs.publish == true
+        run: npm publish --workspace kmind-apm-web --access public
+
+      - name: Publish React wrapper
+        if: github.event_name == 'push' || inputs.publish == true
+        run: npm publish --workspace kmind-apm-web-react --access public
+
+      - name: Publish Vue wrapper
+        if: github.event_name == 'push' || inputs.publish == true
+        run: npm publish --workspace kmind-apm-web-vue --access public
+
+      - name: Publish Next.js wrapper
+        if: github.event_name == 'push' || inputs.publish == true
+        run: npm publish --workspace kmind-apm-web-next --access public
