@@ -1,6 +1,6 @@
 {
   "name": "kmind-apm-web-react",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": { "type": "git", "url": "git+https://github.com/fcconsultoria/kmind-apm-web.git" },
   "homepage": "https://github.com/fcconsultoria/kmind-apm-web#readme",
   "bugs": { "url": "https://github.com/fcconsultoria/kmind-apm-web/issues" },
@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
   "scripts": { "build": "tsup" },
-  "dependencies": { "kmind-apm-web": "^0.1.1" },
+  "dependencies": { "kmind-apm-web": "^0.1.2" },
   "peerDependencies": { "react": ">=18" },
   "devDependencies": { "@types/react": "^19.1.2", "react": "^19.1.0", "tsup": "^8.5.0", "typescript": "^5.8.3" }
 }

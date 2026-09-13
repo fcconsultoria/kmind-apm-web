@@ -3,7 +3,10 @@ export type PrivacyRules = {
   redactUrlQueryKeys?: string[];
 };
 export type KmindConfig = {
-  serviceName: string;
+  /** Name shown as an application in Kmind. */
+  applicationName?: string;
+  /** @deprecated Use applicationName. Kept for backwards compatibility. */
+  serviceName?: string;
   clientKey: string;
   enabled?: boolean;
   sampleRate?: number;
@@ -19,15 +22,16 @@ export type KmindConfig = {
   slowTraceThresholdMs?: number;
 };
 
-export type ResolvedConfig = Required<Omit<KmindConfig, "propagateTraceTo" | "privacy">> & { propagateTraceTo: string[]; privacy: Required<PrivacyRules> };
+export type ResolvedConfig = Required<Omit<KmindConfig, "applicationName" | "serviceName" | "propagateTraceTo" | "privacy">> & { applicationName: string; propagateTraceTo: string[]; privacy: Required<PrivacyRules> };
 
 export function resolveConfig(input: KmindConfig): ResolvedConfig {
-  if (!input.serviceName.trim()) throw new Error("serviceName is required");
+  const applicationName = (input.applicationName ?? input.serviceName ?? "").trim();
+  if (!applicationName) throw new Error("applicationName is required");
   if (!input.clientKey.trim()) throw new Error("clientKey is required");
   const sampleRate = input.sampleRate ?? 1;
   if (sampleRate < 0 || sampleRate > 1) throw new Error("sampleRate must be between 0 and 1");
   return {
-    serviceName: input.serviceName.trim(), clientKey: input.clientKey.trim(), enabled: input.enabled ?? true,
+    applicationName, clientKey: input.clientKey.trim(), enabled: input.enabled ?? true,
     sampleRate, debugHttp: input.debugHttp ?? false, debugTrace: input.debugTrace ?? false,
     captureConsole: input.captureConsole ?? false,
     propagateTraceTo: input.propagateTraceTo ?? [], endpoint: (input.endpoint ?? "https://ingest.kmind.com.br/v1").replace(/\/$/, ""),

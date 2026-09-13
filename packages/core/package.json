@@ -1,6 +1,6 @@
 {
   "name": "kmind-apm-web",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Framework-agnostic browser observability SDK for Kmind.",
   "repository": { "type": "git", "url": "https://github.com/fcconsultoria/kmind-apm-web" },
   "homepage": "https://github.com/fcconsultoria/kmind-apm-web#readme",

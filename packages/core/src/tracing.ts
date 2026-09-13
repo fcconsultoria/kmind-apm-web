@@ -23,9 +23,9 @@ export function endSpan(span: SpanData, error = false): void {
   const durationMs = Number(BigInt(span.end) - BigInt(span.start)) / 1_000_000;
   const promoted = shouldPromoteTrace(error, durationMs, config.slowTraceThresholdMs);
   if (state.sampled || promoted) {
-    state.pending.forEach((item) => enqueue("traces", tracePayload(config.serviceName, item)));
+    state.pending.forEach((item) => enqueue("traces", tracePayload(config.applicationName, item)));
     state.pending = []; state.sampled = true;
-    enqueue("traces", tracePayload(config.serviceName, span));
+    enqueue("traces", tracePayload(config.applicationName, span));
   } else state.pending.push(span);
   if (!span.parentSpanId) traceStates.delete(span.traceId);
 }

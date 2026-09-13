@@ -6,7 +6,7 @@ SDK de observabilidade para browser, agnostico de framework. Esta primeira entre
 import { init } from "kmind-apm-web";
 
 init({
-  serviceName: "portal-cliente",
+  applicationName: "portal-cliente",
   clientKey: "kmw_...",
   propagateTraceTo: ["api.minhaempresa.com.br"],
 });
@@ -27,7 +27,7 @@ logger.error("Pagamento recusado", { provider: "cartao" });
 
 ```ts
 init({
-  serviceName: "portal-cliente",
+  applicationName: "portal-cliente",
   clientKey: "kmw_...",
   captureConsole: true,
 });
@@ -49,7 +49,7 @@ Por padrao, `token`, `email`, `cpf` e `password` em URLs sao mascarados. A confi
 
 ```ts
 init({
-  serviceName: "portal-cliente",
+  applicationName: "portal-cliente",
   clientKey: "kmw_...",
   sampleRate: 0.2,
   slowTraceThresholdMs: 1200,

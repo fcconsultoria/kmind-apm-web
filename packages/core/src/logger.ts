@@ -23,7 +23,7 @@ function write(severity: "INFO" | "WARN" | "ERROR", message: string, attributes:
   safeRun(() => {
     if (!config) return;
     const context = getActiveSpanContext();
-    enqueue("logs", logPayload(config.serviceName, severity, scrub(message), {
+    enqueue("logs", logPayload(config.applicationName, severity, scrub(message), {
       ...normalizeAttributes(attributes),
       trace_id: context?.traceId,
       span_id: context?.spanId,
