@@ -1,0 +1,8 @@
+import { attributes, nanoNow } from "./utils";
+import { sessionId } from "./session";
+
+export type SpanData = { traceId: string; spanId: string; parentSpanId?: string; name: string; start: string; end?: string; status?: "ERROR" | "OK"; attrs: Record<string, unknown> };
+const resource = (serviceName: string) => ({ attributes: attributes({ "service.name": serviceName, "session.id": sessionId(), "telemetry.sdk.name": "kmind-apm-web" }) });
+export function tracePayload(serviceName: string, span: SpanData) { return { resourceSpans: [{ resource: resource(serviceName), scopeSpans: [{ scope: { name: "kmind-apm-web" }, spans: [{ traceId: span.traceId, spanId: span.spanId, parentSpanId: span.parentSpanId, name: span.name, kind: 3, startTimeUnixNano: span.start, endTimeUnixNano: span.end ?? nanoNow(), attributes: attributes(span.attrs), status: span.status === "ERROR" ? { code: 2 } : { code: 1 } }] }] }] }; }
+export function metricPayload(serviceName: string, name: string, value: number, attrs: Record<string, unknown>) { return { resourceMetrics: [{ resource: resource(serviceName), scopeMetrics: [{ scope: { name: "kmind-apm-web" }, metrics: [{ name, unit: "ms", gauge: { dataPoints: [{ asDouble: value, timeUnixNano: nanoNow(), attributes: attributes({ "url.path": location.pathname, "session.id": sessionId(), ...attrs }) }] } }] }] }] }; }
+export function logPayload(serviceName: string, severity: string, message: string, attrs: Record<string, unknown>) { return { resourceLogs: [{ resource: resource(serviceName), scopeLogs: [{ scope: { name: "kmind-apm-web" }, logRecords: [{ timeUnixNano: nanoNow(), severityText: severity, body: { stringValue: message }, attributes: attributes({ "session.id": sessionId(), ...attrs }) }] }] }] }; }

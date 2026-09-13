@@ -1,0 +1,1 @@
+{ "name": "kmind-apm-web-vanilla-example", "private": true, "type": "module", "scripts": { "dev": "vite" }, "devDependencies": { "vite": "^6.3.5" }, "dependencies": { "kmind-apm-web": "*" } }

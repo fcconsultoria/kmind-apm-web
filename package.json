@@ -1,0 +1,9 @@
+{
+  "name": "kmind-apm-web-monorepo",
+  "private": true,
+  "workspaces": ["packages/*", "examples/*"],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test -w kmind-apm-web"
+  }
+}

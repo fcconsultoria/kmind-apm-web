@@ -1,0 +1,12 @@
+{
+  "name": "kmind-apm-web-react",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "scripts": { "build": "tsup" },
+  "dependencies": { "kmind-apm-web": "*" },
+  "peerDependencies": { "react": ">=18" },
+  "devDependencies": { "@types/react": "^19.1.2", "react": "^19.1.0", "tsup": "^8.5.0", "typescript": "^5.8.3" }
+}
